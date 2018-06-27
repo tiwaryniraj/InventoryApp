@@ -1,0 +1,40 @@
+<resources>
+    <!-- Name for the application [CHAR LIMIT=12] -->
+    <string name="app_name">Inventory</string>
+
+    <!-- Label for overflow menu option that inserts fake pet data into the app [CHAR LIMIT=20] -->
+    <string name="action_insert_dummy_data">Insert Dummy Data</string>
+
+    <!-- Label for overflow menu option that deletes all pet data in the app [CHAR LIMIT=20] -->
+    <string name="action_delete_all_entries">Delete All Inventory</string>
+
+    <!-- Title for the activity to add a new pet [CHAR LIMIT=20] -->
+    <string name="editor_activity_title_new_inventory">Add an Inventory</string>
+
+    <!-- Label for editor menu option to save pet and leave editor [CHAR LIMIT=20] -->
+    <string name="action_save">Save</string>
+
+    <!-- Label for editor overflow menu option that deletes the current pet [CHAR LIMIT=20] -->
+    <string name="action_delete">Delete</string>
+
+    <!-- Label for overview category of attributes in the editor [CHAR LIMIT=30] -->
+    <string name="category_overview">Overview</string>
+
+    <!-- Label for measurement information in the editor [CHAR LIMIT=30] -->
+    <string name="category_measurement">Price Per Item</string>
+
+    <!-- Text hint for name field in the editor [CHAR LIMIT=30] -->
+    <string name="hint_inventory_name">Name</string>
+
+    <!-- Text hint for breed field in the editor [CHAR LIMIT=30] -->
+    <string name="hint_inventory_price">Price</string>
+
+    <!-- Text hint for name field in the editor [CHAR LIMIT=30] -->
+    <string name="hint_inventory_quantity">Quantity</string>
+
+    <string name="hint_inventory_supName">Supplier Name</string>
+    <string name="hint_inventory_supNum">Supplier Number</string>
+
+    <!-- Units for weight of the pet (kilograms) [CHAR LIMIT=5] -->
+    <string name="unit_inventory_price">Rs.</string>
+</resources>
