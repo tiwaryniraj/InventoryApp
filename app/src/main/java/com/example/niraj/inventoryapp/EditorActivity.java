@@ -41,11 +41,11 @@ public class EditorActivity extends AppCompatActivity {
         setContentView(R.layout.activity_editor);
 
         // Find all relevant views that we will need to read user input from
-        mNameEditText = (EditText) findViewById(R.id.edit_inventory_name);
-        mPriceEditText = (EditText) findViewById(R.id.edit_inventory_price);
-        mQuantityEditText = (EditText) findViewById(R.id.edit_inventory_quantity);
-        mSupNameEditText = (EditText) findViewById(R.id.edit_inventory_suplierName);
-        mSupNumEditText = (EditText) findViewById(R.id.edit_inventory_suplierNum);
+        mNameEditText = findViewById(R.id.edit_inventory_name);
+        mPriceEditText = findViewById(R.id.edit_inventory_price);
+        mQuantityEditText = findViewById(R.id.edit_inventory_quantity);
+        mSupNameEditText = findViewById(R.id.edit_inventory_suplierName);
+        mSupNumEditText = findViewById(R.id.edit_inventory_suplierNum);
     }
 
     private void insertInventory() {
@@ -106,10 +106,10 @@ public class EditorActivity extends AppCompatActivity {
                 // Exit activity
                 finish();
                 return true;
-            // Respond to a click on the "Delete" menu option
-            case R.id.action_delete:
+            // Respond to a click on the "Delete" menu option Will implement in future
+            /*case R.id.action_delete:
                 // Do nothing for now
-                return true;
+                return true;*/
             // Respond to a click on the "Up" arrow button in the app bar
             case android.R.id.home:
                 // Navigate back to parent activity (CatalogActivity)
