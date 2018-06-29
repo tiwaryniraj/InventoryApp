@@ -85,4 +85,6 @@
 
     <!-- Label for the pet's breed if the breed is unknown [CHAR LIMIT=20] -->
     <string name="unknown_breed">Unknown breed</string>
+    <string name="sell_product_failed">Not Available.</string>
+    <string name="buy">Buy</string>
 </resources>

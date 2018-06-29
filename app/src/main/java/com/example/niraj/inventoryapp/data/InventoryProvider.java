@@ -230,7 +230,7 @@ public class InventoryProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
         switch (match) {
             case INVENTORYS:
-                // Delete all rows that match the selection and selection args For  case PETS:
+                // Delete all rows that match the selection and selection args For  case InventoryS:
                 rowsDeleted = database.delete(InventoryEntry.TABLE_NAME, selection, selectionArgs);
                 break;
             case INVENTORY_ID:

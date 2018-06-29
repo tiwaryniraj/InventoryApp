@@ -1,12 +1,17 @@
 package com.example.niraj.inventoryapp;
 
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.example.niraj.inventoryapp.data.InventoryContract.InventoryEntry;
 
 public class InventoryCursorAdapter extends CursorAdapter {
@@ -36,8 +41,8 @@ public class InventoryCursorAdapter extends CursorAdapter {
     }
 
     /**
-     * This method binds the pet data (in the current row pointed to by cursor) to the given
-     * list item layout. For example, the name for the current pet can be set on the name TextView
+     * This method binds the inventory data (in the current row pointed to by cursor) to the given
+     * list item layout. For example, the name for the current inventory can be set on the name TextView
      * in the list item layout.
      *
      * @param view    Existing view, returned earlier by newView() method
@@ -46,21 +51,50 @@ public class InventoryCursorAdapter extends CursorAdapter {
      *                correct row.
      */
     @Override
-    public void bindView(View view, Context context, Cursor cursor) {
+    public void bindView(View view, final Context context, Cursor cursor) {
+        final long id;
+        final int mQuantity;
+
+        id = cursor.getLong(cursor.getColumnIndex(InventoryEntry._ID));
         // Find individual views that we want to modify in the list item layout
         TextView nameTextView = (TextView) view.findViewById(R.id.name);
         TextView summaryTextView = (TextView) view.findViewById(R.id.summary);
+        TextView summarysecTextView = (TextView) view.findViewById(R.id.summarysec);
+        TextView buyTextView = (TextView) view.findViewById(R.id.buy);
 
-        // Find the columns of pet attributes that we're interested in
+        // Find the columns of inventory attributes that we're interested in
         int nameColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_INVENTORY_NAME);
         int priceColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_INVENTORY_PRICE);
+        int quantityColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_INVENTORY_QUANTITY);
 
-        // Read the pet attributes from the Cursor for the current pet
-        String inventoryName = cursor.getString(nameColumnIndex);
-        String inventoryPrice = cursor.getString(priceColumnIndex);
+        // Read the inventory attributes from the Cursor for the current inventory
+        final String inventoryName = cursor.getString(nameColumnIndex);
+        final String inventoryPrice = cursor.getString(priceColumnIndex);
+        String inventoryQuantity = cursor.getString(quantityColumnIndex);
+        mQuantity = Integer.parseInt(inventoryQuantity);
 
-        // Update the TextViews with the attributes for the current pet
+        // Update the TextViews with the attributes for the current inventory
         nameTextView.setText(inventoryName);
         summaryTextView.setText(inventoryPrice);
+        summarysecTextView.setText(inventoryQuantity);
+
+        buyTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (v != null) {
+                    ContentValues values = new ContentValues();
+                    values.put(InventoryEntry.COLUMN_INVENTORY_NAME, inventoryName);
+                    values.put(InventoryEntry.COLUMN_INVENTORY_PRICE, inventoryPrice);
+                    values.put(InventoryEntry.COLUMN_INVENTORY_QUANTITY, mQuantity >= 1? mQuantity-1: 0);
+
+                    Uri currentInventoryUri = ContentUris.withAppendedId(InventoryEntry.CONTENT_URI, id);
+
+                    int rowsAffected = context.getContentResolver().update(currentInventoryUri, values, null, null);
+                    if (rowsAffected == 0 || mQuantity == 0) {
+                        Toast.makeText(context, context.getString(R.string.sell_product_failed), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
     }
 }
