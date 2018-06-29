@@ -39,7 +39,7 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
                 startActivity(intent);
             }
         });
-        // Find the ListView which will be populated with the pet data
+        // Find the ListView which will be populated with the inventory data
         ListView inventoryListView = (ListView) findViewById(R.id.list);
 
         // Find and set empty view on the ListView, so that it only shows when the list has 0 items.
@@ -63,16 +63,25 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
 
     }
 
+    public void onBuyClick(long id, int quantity) {
+        Uri currentProductUri = ContentUris.withAppendedId(InventoryEntry.CONTENT_URI, id);
+        Log.v("CatalogActivity", "Uri: " + currentProductUri);
+        quantity--;
+        ContentValues values = new ContentValues();
+        values.put(InventoryEntry.COLUMN_INVENTORY_QUANTITY, quantity);
+        int rowsEffected = getContentResolver().update(currentProductUri, values, null, null);
+    }
+
 
     private void insertInventory(){
 
         // Create a ContentValues object where column names are the keys,
         // and Toto's Inventory attributes are the values.
         ContentValues values = new ContentValues();
-        values.put(InventoryEntry.COLUMN_INVENTORY_NAME, "Pen");
-        values.put(InventoryEntry.COLUMN_INVENTORY_PRICE, 245);
-        values.put(InventoryEntry.COLUMN_INVENTORY_QUANTITY, 2500);
-        values.put(InventoryEntry.COLUMN_INVENTORY_SUP_NAME, "R.K.");
+        values.put(InventoryEntry.COLUMN_INVENTORY_NAME, "Wood");
+        values.put(InventoryEntry.COLUMN_INVENTORY_PRICE, 500);
+        values.put(InventoryEntry.COLUMN_INVENTORY_QUANTITY, 25);
+        values.put(InventoryEntry.COLUMN_INVENTORY_SUP_NAME, "R.K. Supplier");
         values.put(InventoryEntry.COLUMN_INVENTORY_SUP_NUMBER, "8460226598");
 
         Uri newUri = getContentResolver().insert(InventoryEntry.CONTENT_URI, values);
@@ -112,7 +121,8 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
         String[] projection = {
                 InventoryEntry._ID,
                 InventoryEntry.COLUMN_INVENTORY_NAME,
-                InventoryEntry.COLUMN_INVENTORY_PRICE };
+                InventoryEntry.COLUMN_INVENTORY_PRICE,
+                InventoryEntry.COLUMN_INVENTORY_QUANTITY};
         return new CursorLoader(this,
                 InventoryEntry.CONTENT_URI,
                 projection,
