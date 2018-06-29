@@ -48,10 +48,10 @@
     <string name="empty_view_title_text">It\'s a bit lonely here...</string>
 
     <!-- Subtitle text for the empty view that prompts the user to add a pet [CHAR LIMIT=50] -->
-    <string name="empty_view_subtitle_text">Get started by adding an inventory</string>
+    <string name="empty_view_subtitle_text">Get started by adding an inventory by touching the red button below.</string>
 
     <!-- Title for the activity to edit an existing pet [CHAR LIMIT=20] -->
-    <string name="editor_activity_title_edit_inventory">Edit Inventory</string>
+    <string name="editor_activity_title_edit_inventory">Edit and View Inventory</string>
 
     <!-- Toast message in editor when current pet was successfully updated [CHAR LIMIT=NONE] -->
     <string name="editor_update_inventory_successful">Inventory updated</string>
@@ -87,4 +87,9 @@
     <string name="unknown_breed">Unknown breed</string>
     <string name="sell_product_failed">Not Available.</string>
     <string name="buy">Buy</string>
+    <string name="noLessQuantity">No Less Quantity</string>
+    <string name="supplierNameReq">Supplier name required</string>
+    <string name="supplierEmailReq">Supplier number required</string>
+    <string name="productPriceReq">Product price required</string>
+    <string name="productNameReq">Product Name required</string>
 </resources>

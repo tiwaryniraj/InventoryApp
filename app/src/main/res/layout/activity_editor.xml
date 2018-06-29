@@ -87,4 +87,30 @@
                 style="@style/EditorUnitsStyle"/>
         </RelativeLayout>
     </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/button_minus"
+            style="@style/buttonMin"
+            android:onClick="decrement"
+            android:text="-" />
+
+        <TextView
+            android:id="@+id/edit_quantity_text_view"
+            style="@style/quantityProd"
+            android:hint="0" />
+
+        <Button
+            android:id="@+id/button_plus"
+            style="@style/buttonPlus"
+            android:onClick="increment"
+            android:text="+" />
+    </LinearLayout>
+    <Button
+        android:id="@+id/button_order"
+        style="@style/orderButton"
+        android:text="Call" />
 </LinearLayout>

@@ -38,10 +38,11 @@
 
         <TextView
             android:id="@+id/empty_subtitle_text"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/empty_title_text"
             android:layout_centerHorizontal="true"
+            android:gravity="center_horizontal"
             android:fontFamily="sans-serif"
             android:paddingTop="8dp"
             android:text="@string/empty_view_subtitle_text"

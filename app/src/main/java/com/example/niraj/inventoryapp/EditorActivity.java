@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
@@ -18,10 +17,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.example.niraj.inventoryapp.data.InventoryContract.InventoryEntry;
-import com.example.niraj.inventoryapp.data.InventoryDbHelper;
 
 public class EditorActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 
@@ -45,6 +45,11 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
     /** EditText field to enter the Inventory's weight */
     private EditText mSupNumEditText;
+    private int quantity;
+    private TextView quantityTextView;
+    private Button plusButton;
+    private Button minusButton;
+    private Button orderButton;
 
     /** Boolean flag that keeps track of whether the inventory has been edited (true) or not (false) */
     private boolean mInventoryHasChanged = false;
@@ -71,11 +76,26 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         Intent intent = getIntent();
         mCurrentInventoryUri = intent.getData();
 
+        // Find all relevant views that we will need to read user input from
+        mNameEditText = findViewById(R.id.edit_inventory_name);
+        mPriceEditText = findViewById(R.id.edit_inventory_price);
+        mQuantityEditText = findViewById(R.id.edit_inventory_quantity);
+        mSupNameEditText = findViewById(R.id.edit_inventory_suplierName);
+        mSupNumEditText = findViewById(R.id.edit_inventory_suplierNum);
+        quantityTextView = findViewById(R.id.edit_quantity_text_view);
+        plusButton =  findViewById(R.id.button_plus);
+        minusButton =  findViewById(R.id.button_minus);
+        orderButton = findViewById(R.id.button_order);
+
         // If the intent DOES NOT contain a inventory content URI, then we know that we are
         // creating a new inventory.
         if (mCurrentInventoryUri == null) {
             // This is a new inventory, so change the app bar to say "Add a inventory"
             setTitle(getString(R.string.editor_activity_title_new_inventory));
+            orderButton.setVisibility(View.GONE);
+            plusButton.setVisibility(View.GONE);
+            minusButton.setVisibility(View.GONE);
+            quantityTextView.setVisibility(View.GONE);
 
             // Invalidate the options menu, so the "Delete" menu option can be hidden.
             // (It doesn't make sense to delete a inventory that hasn't been created yet.)
@@ -89,12 +109,13 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             getLoaderManager().initLoader(EXISTING_INVENTORY_LOADER, null, this);
         }
 
-        // Find all relevant views that we will need to read user input from
-        mNameEditText = findViewById(R.id.edit_inventory_name);
-        mPriceEditText = findViewById(R.id.edit_inventory_price);
-        mQuantityEditText = findViewById(R.id.edit_inventory_quantity);
-        mSupNameEditText = findViewById(R.id.edit_inventory_suplierName);
-        mSupNumEditText = findViewById(R.id.edit_inventory_suplierNum);
+        orderButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", mSupNumEditText.getText().toString().trim(), null));
+                startActivity(intent);
+            }
+        });
         // Setup OnTouchListeners on all the input fields, so we can determine if the user
         // has touched or modified them. This will let us know if there are unsaved changes
         // or not, if the user tries to leave the editor without saving.
@@ -103,9 +124,14 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         mQuantityEditText.setOnTouchListener(mTouchListener);
         mSupNameEditText.setOnTouchListener(mTouchListener);
         mSupNumEditText.setOnTouchListener(mTouchListener);
+        minusButton.setOnTouchListener(mTouchListener);
+        plusButton.setOnTouchListener(mTouchListener);
+        orderButton.setOnTouchListener(mTouchListener);
+
     }
 
-    private void saveInventory() {
+    private boolean saveInventory() {
+        boolean allFilledOut = false;
         // Read from input fields
         // Use trim to eliminate leading or trailing white space
         String nameString = mNameEditText.getText().toString().trim();
@@ -121,15 +147,46 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                 TextUtils.isEmpty(supNumberString)) {
             // Since no fields were modified, we can return early without creating a new inventory.
             // No need to create ContentValues and no need to do any ContentProvider operations.
-            return;
+            return true;
         }
+
+        if (TextUtils.isEmpty(nameString)) {
+            Toast.makeText(this, getString(R.string.productNameReq), Toast.LENGTH_SHORT).show();
+            return allFilledOut;
+        }
+
+        ContentValues values = new ContentValues();
+        values.put(InventoryEntry.COLUMN_INVENTORY_NAME, nameString);
+
+        /*if (TextUtils.isEmpty(priceString)) {
+            Toast.makeText(this, getString(R.string.productPriceReq), Toast.LENGTH_SHORT).show();
+            return allFilledOut;
+        }
+
+        values.put(InventoryEntry.COLUMN_INVENTORY_PRICE, priceString);*/
+
+        if (TextUtils.isEmpty(supNameString)) {
+            Toast.makeText(this, getString(R.string.supplierNameReq), Toast.LENGTH_SHORT).show();
+            return allFilledOut;
+        }
+
+        values.put(InventoryEntry.COLUMN_INVENTORY_SUP_NAME, supNameString);
+
+        if (TextUtils.isEmpty(supNumberString)) {
+            Toast.makeText(this, getString(R.string.supplierEmailReq), Toast.LENGTH_SHORT).show();
+            return allFilledOut;
+        }
+
+        values.put(InventoryEntry.COLUMN_INVENTORY_SUP_NUMBER, supNumberString);
+
+        /*if (TextUtils.isEmpty(quantityString)) {
+            Toast.makeText(this, getString(R.string.quantityReq), Toast.LENGTH_SHORT).show();
+            return allFilledOut;
+        }
+        values.put(InventoryEntry.COLUMN_INVENTORY_QUANTITY, quantityString);*/
 
         // Create a ContentValues object where column names are the keys,
         // and Inventory attributes from the editor are the values.
-        ContentValues values = new ContentValues();
-        values.put(InventoryEntry.COLUMN_INVENTORY_NAME, nameString);
-        values.put(InventoryEntry.COLUMN_INVENTORY_SUP_NAME, supNameString);
-        values.put(InventoryEntry.COLUMN_INVENTORY_SUP_NUMBER, supNumberString);
         int price = 0;
         if (!TextUtils.isEmpty(priceString)) {
             price = Integer.parseInt(priceString);
@@ -176,6 +233,8 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                         Toast.LENGTH_SHORT).show();
             }
         }
+        allFilledOut = true;
+        return allFilledOut;
     }
 
     @Override
@@ -208,9 +267,9 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             // Respond to a click on the "Save" menu option
             case R.id.action_save:
                 // Save Inventory to database
-                saveInventory();
-                // Exit activity
-                finish();
+                if (saveInventory()) {
+                    finish();
+                }
                 return true;
             // Respond to a click on the "Delete" menu option Will implement in future
             case R.id.action_delete:
@@ -315,7 +374,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             String name = cursor.getString(nameColumnIndex);
             String supName = cursor.getString(supNameColumnIndex);
             String supNum = cursor.getString(supNumColumnIndex);
-            int quantity = cursor.getInt(quantityColumnIndex);
+            quantity = cursor.getInt(quantityColumnIndex);
             int price = cursor.getInt(priceColumnIndex);
 
             // Update the views on the screen with the values from the database
@@ -324,6 +383,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             mSupNumEditText.setText(supNum);
             mPriceEditText.setText(Integer.toString(price));
             mQuantityEditText.setText(Integer.toString(quantity));
+            quantityTextView.setText(Integer.toString(quantity));
         }
 
     }
@@ -335,6 +395,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         mSupNumEditText.setText("");
         mPriceEditText.setText("");
         mQuantityEditText.setText("");
+        quantityTextView.setText("");
     }
 
     private void showUnsavedChangesDialog(
@@ -413,5 +474,24 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
         // Close the activity
         finish();
+    }
+
+    public void increment(View view) {
+        quantity++;
+        displayQuantity();
+    }
+
+    public void decrement(View view) {
+        if (quantity == 0) {
+            Toast.makeText(this, R.string.noLessQuantity, Toast.LENGTH_SHORT).show();
+        } else {
+            quantity--;
+            displayQuantity();
+        }
+    }
+
+    public void displayQuantity() {
+        quantityTextView.setText(String.valueOf(quantity));
+        mQuantityEditText.setText(String.valueOf(quantity));
     }
 }
